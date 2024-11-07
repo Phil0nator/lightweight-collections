@@ -1,0 +1,6 @@
+version: "1.0.0"
+description: "lightweight collection structures for embedded applications"
+url: "https://github.com/Phil0nator/lightweight-collections"
+dependencies:
+  idf:
+    version: ">=5.0"
