@@ -200,13 +200,11 @@ lcl_err_t lcl_vect_display(const lcl_vect_t vect, const char *fmt)
         lcl_vect_header_t* header = lcl_vect_get_header( vect );
         if ( header->isize > LCL_DISPSIZE_MAX ) return LCL_BAD_ARGUMENT;
         const char* byte_it = vect;
-        uint64_t data;
         printf("[");
         for (size_t i = 0; i < header->len; i++) {
-            memcpy( &data, byte_it, header->isize );
             byte_it += header->isize;
             if (i) printf(", ");
-            printf(fmt, data);
+            printf_unkown( byte_it, header->isize, fmt );
         }
         printf("]\n");
     } else return LCL_BAD_ARGUMENT;
