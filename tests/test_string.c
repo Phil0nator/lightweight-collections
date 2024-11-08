@@ -7,7 +7,6 @@
 int main() {
 
     lcl_str_t my_string;
-    lcl_err_t err;
 
     lcl_str_from( &my_string, "Hello World!" );
     printf("%s\n", my_string);
