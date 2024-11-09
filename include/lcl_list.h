@@ -34,11 +34,6 @@ lcl_err_t lcl_list_extend( lcl_list_t* list, const void* data, size_t items );
 #define lcl_list_pop( list, dest ) lcl_list_truncate( list, dest, 1 )
 lcl_err_t lcl_list_truncate( lcl_list_t* list, void* dest, size_t count );
 
-// insert item
-// insert list
-
-// splice item
-// splice list
 
 lcl_err_t lcl_list_inserts( lcl_list_t* list, lcl_list_it_t *at, const void* data, size_t count );
 

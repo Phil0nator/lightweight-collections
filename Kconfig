@@ -1,0 +1,18 @@
+menu "lcl"
+    menu "vect"
+        
+        choice
+            prompt "Vector capacity expand function"
+            default VECT_CAP_EXPAND_DOUBLE
+            
+            config VECT_CAP_EXPAND_DOUBLE
+                bool "Double capacity each expansion"
+            
+            config VECT_CAP_ADD_CONST
+                int "Add constant capacity each expansion"
+            
+                
+        endchoice
+
+    endmenu
+endmenu

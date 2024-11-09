@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <inttypes.h>
 
 #include "private/lcl_util.h"
 
@@ -254,7 +255,7 @@ lcl_err_t lcl_vect_debug(const lcl_vect_t vect)
 {
     if (vect) {
         lcl_vect_header_t* header = lcl_vect_get_header(vect);
-        printf("lcl_vect_t: { len: %lu, cap: %lu, isize: %lu }\n", header->len, header->cap, header->isize);
+        printf("lcl_vect_t: { len: %zu, cap: %zu, isize: %zu }\n", header->len, header->cap, header->isize);
     } else return LCL_BAD_ARGUMENT;
     return LCL_OK;
 }
