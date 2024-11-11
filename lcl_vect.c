@@ -203,9 +203,9 @@ lcl_err_t lcl_vect_display(const lcl_vect_t vect, const char *fmt)
         const char* byte_it = vect;
         printf("[");
         for (size_t i = 0; i < header->len; i++) {
-            byte_it += header->isize;
             if (i) printf(", ");
             printf_unkown( byte_it, header->isize, fmt );
+            byte_it += header->isize;
         }
         printf("]\n");
     } else return LCL_BAD_ARGUMENT;

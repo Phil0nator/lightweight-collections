@@ -11,6 +11,7 @@ int main() {
 
     int item = 5;
     lcl_vect_push( &my_vect, &item);
+    lcl_vect_display( my_vect, "%d" );
 
     int others[] = {6, 7, 8};
     lcl_vect_extend( &my_vect, others, 3 );
@@ -39,8 +40,8 @@ int main() {
     lcl_vect_inserts( &my_vect, 2, more, 3 );
 
     lcl_vect_display(my_vect, "%d");
-
-    lcl_vect_splice(&my_vect, 1, NULL, 3);
+    printf("test:\n");
+    lcl_vect_splice(&my_vect, 2, NULL, 9);
 
     lcl_vect_display(my_vect, "%d");
 

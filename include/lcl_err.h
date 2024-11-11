@@ -2,6 +2,9 @@
 #ifndef LCL_ERR_H
 #define LCL_ERR_H
 
+/**
+ * @brief Errors returned by LCL functions
+ */
 typedef enum lcl_err {
     LCL_OK,
     LCL_FAIL,
@@ -11,6 +14,6 @@ typedef enum lcl_err {
     LCL_COLLECTION_EMPTY
 } lcl_err_t;
 
-
+const char* lcl_strerror(lcl_err_t err);
 
 #endif

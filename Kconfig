@@ -1,18 +1,32 @@
 menu "lcl"
     menu "vect"
         
+            
         choice
-            prompt "Vector capacity expand function"
-            default VECT_CAP_EXPAND_DOUBLE
-            
-            config VECT_CAP_EXPAND_DOUBLE
-                bool "Double capacity each expansion"
-            
-            config VECT_CAP_ADD_CONST
-                int "Add constant capacity each expansion"
-            
-                
+            prompt "Vector capacity expansion"
+            default LCL_VECT_CAP_DOUBLE
+
+        config LCL_VECT_CAP_DOUBLE
+            bool "Enable feature (boolean)"
+            help
+                Select this option to enable a simple boolean feature.
+
+        config LCL_VECT_CAP_ADD
+            int "Set feature value (integer)"
+            range 0 100
+            help
+                Select this option to set an integer value (e.g., between 0 and 100).
+
         endchoice
+
+        config LCL_VECT_CAP_ADD_AMOUNT
+            int "Integer value for feature"
+            depends on CONFIG_OPTION_INT
+            default 0
+            help
+                This value is used if the integer feature option is selected.
+
 
     endmenu
 endmenu
+
