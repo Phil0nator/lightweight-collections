@@ -23,5 +23,9 @@ int main() {
     lcl_list_splice( list, lcl_list_index( list, 1 ), NULL, 2 );
     lcl_list_display( list, "%d" );
 
+    lcl_list_swap( list, lcl_list_index( list, 0 ), lcl_list_index(list, 2) );
+    lcl_list_display( list, "%d" );
+
+
     return 0;
 }

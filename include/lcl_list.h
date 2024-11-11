@@ -40,7 +40,7 @@ lcl_err_t lcl_list_inserts( lcl_list_t* list, lcl_list_it_t *at, const void* dat
 lcl_err_t lcl_list_splice( lcl_list_t* list, lcl_list_it_t *at, void* data, size_t count );
 
 
-lcl_err_t lcl_list_swap( lcl_list_t* list, size_t a, size_t b );
+lcl_err_t lcl_list_swap( lcl_list_t* list, lcl_list_it_t* a, lcl_list_it_t* b );
 
 lcl_err_t lcl_list_display(lcl_list_t* list, const char* fmt);
 

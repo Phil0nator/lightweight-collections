@@ -164,8 +164,8 @@ lcl_err_t lcl_list_truncate(lcl_list_t *list, void *dest, size_t count)
 lcl_err_t lcl_list_inserts(lcl_list_t *list, lcl_list_it_t *at, const void *data, size_t count)
 {
     if (list && at) {
-        lcl_list_node_t* ender = at->next;
-        lcl_list_node_t* prev = at;
+        lcl_list_node_t* ender = at;
+        lcl_list_node_t* prev = at->prev;
 
         const char* bytereader = data;
         for (size_t i = 0; i < count; i++) {
@@ -224,6 +224,58 @@ lcl_err_t lcl_list_splice(lcl_list_t *list, lcl_list_it_t *at, void *data, size_
         }
 
     } else return LCL_BAD_ARGUMENT;
+    return LCL_OK;
+}
+
+lcl_err_t lcl_list_swap(lcl_list_t *list, lcl_list_it_t *a, lcl_list_it_t *b)
+{
+    if (!(a && b && list)) return LCL_BAD_ARGUMENT;
+    if (a == b) return LCL_OK;
+
+
+     // If nodeA is not head of the list
+    if (a->prev != NULL)
+        a->prev->next = b;
+    else  // nodeA is head, update head pointer
+        list->head = b;
+
+    // If nodeB is not head of the list
+    if (b->prev != NULL)
+        b->prev->next = a;
+    else  // nodeB is head, update head pointer
+        list->head = a;
+    
+    // Swap next pointers of nodeA and nodeB
+    lcl_list_node_t* temp = a->next;
+    a->next = b->next;
+    b->next = temp;
+
+    
+    // Update next node’s prev pointers if not NULL
+    if (a->next != NULL)
+        a->next->prev = a;
+    if (b->next != NULL)
+        b->next->prev = b;
+
+    // Swap prev pointers of nodeA and nodeB
+    temp = a->prev;
+    a->prev = b->prev;
+    b->prev = temp;
+
+    // Update previous node’s next pointers if not NULL
+    if (a->prev != NULL)
+        a->prev->next = a;
+    if (b->prev != NULL)
+        b->prev->next = b;
+
+
+    if (a->next == NULL && a != list->head) {
+        list->head->prev = a;
+    }
+    if (b->next == NULL && b != list->head) {
+        list->head->prev = b;
+    }
+
     return LCL_OK;
 }
 

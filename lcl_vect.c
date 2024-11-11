@@ -22,7 +22,14 @@ typedef struct lcl_vect_header {
 #define lcl_vectptr_valid(vectptr) ((vectptr) && (*(const char**)(vectptr)))
 
 static size_t lcl_vect_cap_expander(size_t cap) {
-    return cap*2;
+#if defined(LCL_VECT_CAP_DOUBLE)
+        return cap*2;
+#elif defined(LCL_VECT_CAP_ADDER)
+        return cap + LCL_VECT_CAP_ADDER
+#else 
+        // default
+        return cap * 2;
+#endif
 }
 
 static lcl_err_t lcl_vect_expand( lcl_vect_t* vect, size_t min_size ) {
