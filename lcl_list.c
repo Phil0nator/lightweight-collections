@@ -232,49 +232,50 @@ lcl_err_t lcl_list_swap(lcl_list_t *list, lcl_list_it_t *a, lcl_list_it_t *b)
     if (!(a && b && list)) return LCL_BAD_ARGUMENT;
     if (a == b) return LCL_OK;
 
+    lcl_list_node_t* ap = a->prev;
+    lcl_list_node_t* an = a->next;
+    lcl_list_node_t* bp = b->prev;
+    lcl_list_node_t* bn = b->next;
 
-     // If nodeA is not head of the list
-    if (a->prev != NULL)
-        a->prev->next = b;
-    else  // nodeA is head, update head pointer
-        list->head = b;
+    // Swap pointers, handle adjacency case
+    if (an == b) {  // a is immediately before b
+        a->next = bn;
+        a->prev = b;
+        b->next = a;
+        b->prev = ap;
 
-    // If nodeB is not head of the list
-    if (b->prev != NULL)
-        b->prev->next = a;
-    else  // nodeB is head, update head pointer
-        list->head = a;
-    
-    // Swap next pointers of nodeA and nodeB
-    lcl_list_node_t* temp = a->next;
-    a->next = b->next;
-    b->next = temp;
+        if (bn) bn->prev = a;
+        if (ap) ap->next = b;
+    } else if (bn == a) {  // b is immediately before a
+        b->next = an;
+        b->prev = a;
+        a->next = b;
+        a->prev = bp;
 
-    
-    // Update next node’s prev pointers if not NULL
-    if (a->next != NULL)
-        a->next->prev = a;
-    if (b->next != NULL)
-        b->next->prev = b;
+        if (an) an->prev = b;
+        if (bp) bp->next = a;
+    } else {  // Nodes are not adjacent
+        a->prev = bp;
+        a->next = bn;
+        b->prev = ap;
+        b->next = an;
 
-    // Swap prev pointers of nodeA and nodeB
-    temp = a->prev;
-    a->prev = b->prev;
-    b->prev = temp;
-
-    // Update previous node’s next pointers if not NULL
-    if (a->prev != NULL)
-        a->prev->next = a;
-    if (b->prev != NULL)
-        b->prev->next = b;
-
-
-    if (a->next == NULL && a != list->head) {
-        list->head->prev = a;
+        if (bn) bn->prev = a;
+        if (an) an->prev = b;
+        if (ap) ap->next = b;
+        if (bp) bp->next = a;
     }
-    if (b->next == NULL && b != list->head) {
-        list->head->prev = b;
-    }
+
+
+
+    // Update head if necessary
+    if (list->head == a) list->head = b;
+    else if (list->head == b) list->head = a;
+
+    // Update tail if necessary
+    if (list->head->prev == a) list->head->prev = b;
+    else if (list->head->prev == b) list->head->prev = a;
+    
 
     return LCL_OK;
 }

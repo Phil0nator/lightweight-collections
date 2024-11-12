@@ -16,4 +16,8 @@ typedef enum lcl_err {
 
 const char* lcl_strerror(lcl_err_t err);
 
+
+
+
+
 #endif
