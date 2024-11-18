@@ -62,6 +62,24 @@ lcl_err_t __lcl_vect_init(lcl_vect_t* vect, size_t initial_capacity, size_t item
     return LCL_OK;
 }
 
+lcl_err_t __lcl_vect_from(lcl_vect_t *vect, const void *data, size_t itemsize, size_t items)
+{
+    LCL_ERRPASS( __lcl_vect_init(vect, items, itemsize) );
+    LCL_ERRPASS( __lcl_vect_extend(vect, data, items) );
+    return LCL_OK;
+}
+
+lcl_vect_t lcl_vect_clone(const lcl_vect_t vect)
+{
+    lcl_vect_header_t *h = lcl_vect_get_header(vect);
+    lcl_vect_t v;
+
+    if (__lcl_vect_from( &v, vect, h->isize, h->len) != LCL_OK) {
+        return NULL;
+    }
+    
+    return v;
+}
 
 size_t lcl_vect_len(const lcl_vect_t vect)
 {

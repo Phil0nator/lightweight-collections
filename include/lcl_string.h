@@ -2,6 +2,7 @@
 #define LCL_STRING_H
 
 #include <string.h>
+#include <limits.h>
 
 #include "lcl_vect.h"
 
@@ -28,6 +29,24 @@ static inline lcl_err_t lcl_str_init(lcl_str_t* sptr, size_t capacity)
 lcl_err_t lcl_str_from( lcl_str_t* sptr, const char* other );
 
 /**
+ * @brief Clone a string to a new string
+ * 
+ * @param str string to clone
+ * @return lcl_str_t a new string or NULL if no memory is left
+ */
+static inline lcl_str_t lcl_str_clone(const lcl_str_t str) 
+    { return lcl_vect_clone(str); }
+
+
+/**
+ * @brief Reserve at least 'items' items of capacity
+ * @returns any errors
+ */
+static inline lcl_err_t lcl_str_reserve( lcl_str_t* vect, size_t items )
+    { return lcl_vect_reserve(vect, items); }
+
+
+/**
  * @brief Create a string from an existing string
  * 
  * @param sptr string to create
@@ -35,7 +54,8 @@ lcl_err_t lcl_str_from( lcl_str_t* sptr, const char* other );
  * @param len length of original string
  * @return lcl_err_t any errors
  */
-lcl_err_t lcl_str_froms( lcl_str_t* sptr, const char* other, size_t len );
+static inline lcl_err_t lcl_str_froms( lcl_str_t* sptr, const char* other, size_t len ) 
+    { return lcl_vect_from( sptr, other, len ); }
 
 /**
  * @brief Get string length
@@ -117,8 +137,19 @@ lcl_err_t lcl_str_truncate( lcl_str_t* sptr, char* dest, size_t count );
  * @param items number of characters to insert
  * @return lcl_err_t any errors
  */
-static inline lcl_err_t lcl_str_inserts( lcl_str_t* sptr, size_t index, const char* data, size_t items )
+static inline lcl_err_t lcl_str_insertns( lcl_str_t* sptr, size_t index, const char* data, size_t items )
     { return lcl_vect_inserts( sptr, index, data, items ); }
+
+/**
+ * @brief Insert a string into the middle of an existing string
+ * 
+ * @param sptr string to modify
+ * @param index index to insert at
+ * @param data null-terminated string to insert
+ * @return lcl_err_t any errors
+ */
+static inline lcl_err_t lcl_str_inserts( lcl_str_t* sptr, size_t index, const char* data )
+    { return lcl_vect_inserts( sptr, index, data, strlen(data) ); }
 
 /**
  * @brief Insert a single char into a string
@@ -137,6 +168,19 @@ static inline lcl_err_t lcl_str_inserts( lcl_str_t* sptr, size_t index, const ch
  * @return lcl_err_t any errors
  */
 lcl_err_t lcl_str_splice( lcl_str_t* sptr, size_t index, char* data, size_t count );
+
+#define LCL_STR_REPLACEALL (SIZE_MAX)
+
+static inline lcl_err_t lcl_str_replacess( lcl_str_t* sptr, size_t start, size_t count, const char* find, const char* replace )
+    { return lcl_str_replacesnsn( sptr, start, count, find, strlen(find), replace, strlen(replace) ); }
+static inline lcl_err_t lcl_str_replacesnsn( lcl_str_t* sptr, size_t start, size_t count, const char* find, const char* replace, size_t replace_len )
+    { return lcl_str_replacesnsn( sptr, start, count, find, strlen(find), replace, replace_len ); }
+static inline lcl_err_t lcl_str_replacesns( lcl_str_t* sptr, size_t start, size_t count, const char* find, size_t find_len, const char* replace )
+    { return lcl_str_replacesnsn( sptr, start, count, find, find_len, replace, strlen(replace) ); }
+
+lcl_err_t lcl_str_replacesnsn( lcl_str_t* sptr, size_t start, size_t count, const char* find, size_t findlen, const char* replace, size_t replace_len );
+
+
 
 /**
  * @brief Remove a character

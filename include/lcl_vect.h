@@ -12,8 +12,27 @@ typedef void* lcl_vect_t;
  * 
  * @returns lcl_err_t any errors
  */
-#define lcl_vect_init( vectptr, capacity ) __lcl_vect_init( (lcl_vect_t*) vectptr, capacity, sizeof(**vectptr) )
+#define lcl_vect_init( vectptr, capacity ) __lcl_vect_init( (lcl_vect_t*) vectptr, capacity, sizeof(**(vectptr)) )
 lcl_err_t __lcl_vect_init( lcl_vect_t* vect, size_t initial_capacity, size_t itemsize);
+
+/**
+ * @brief Create a vect from a starting piece of data
+ * 
+ * @param vectptr vect to init
+ * @param data initial data to copy
+ * @param len number of elements to copy
+ */
+#define lcl_vect_from(vectptr, data, len) __lcl_vect_from( (lcl_vect_t*) vectptr, data, sizeof(**(vectptr)), len )
+lcl_err_t __lcl_vect_from( lcl_vect_t* vect, const void* data, size_t itemsize, size_t items );
+
+/**
+ * @brief Clone a vect to a new vect
+ * 
+ * @param vect a vect to clone
+ * @return lcl_vect_t a new vect with the same length and data, 
+ *  or NULL if no memory is available 
+ */
+lcl_vect_t lcl_vect_clone(const lcl_vect_t vect);
 
 /**
  * @brief Get the len of vect
