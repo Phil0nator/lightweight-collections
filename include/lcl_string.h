@@ -155,7 +155,7 @@ static inline lcl_err_t lcl_str_inserts( lcl_str_t* sptr, size_t index, const ch
  * @brief Insert a single char into a string
  * @see lcl_str_inserts
  */
-#define lcl_str_insert(sptr, index, data) lcl_str_inserts( sptr, index, data, 1 )
+#define lcl_str_insert(sptr, index, data) lcl_str_insertns( sptr, index, data, 1 )
 
 /**
  * @brief remove a string from the middle of a string
@@ -171,14 +171,16 @@ lcl_err_t lcl_str_splice( lcl_str_t* sptr, size_t index, char* data, size_t coun
 
 #define LCL_STR_REPLACEALL (SIZE_MAX)
 
-static inline lcl_err_t lcl_str_replacess( lcl_str_t* sptr, size_t start, size_t count, const char* find, const char* replace )
+lcl_err_t lcl_str_replacesnsn( lcl_str_t* sptr, size_t start, size_t count, const char* find, size_t findlen, const char* replace, size_t replace_len );
+
+
+static inline lcl_err_t lcl_str_replace( lcl_str_t* sptr, size_t start, size_t count, const char* find, const char* replace )
     { return lcl_str_replacesnsn( sptr, start, count, find, strlen(find), replace, strlen(replace) ); }
-static inline lcl_err_t lcl_str_replacesnsn( lcl_str_t* sptr, size_t start, size_t count, const char* find, const char* replace, size_t replace_len )
+static inline lcl_err_t lcl_str_replacessn( lcl_str_t* sptr, size_t start, size_t count, const char* find, const char* replace, size_t replace_len )
     { return lcl_str_replacesnsn( sptr, start, count, find, strlen(find), replace, replace_len ); }
 static inline lcl_err_t lcl_str_replacesns( lcl_str_t* sptr, size_t start, size_t count, const char* find, size_t find_len, const char* replace )
     { return lcl_str_replacesnsn( sptr, start, count, find, find_len, replace, strlen(replace) ); }
 
-lcl_err_t lcl_str_replacesnsn( lcl_str_t* sptr, size_t start, size_t count, const char* find, size_t findlen, const char* replace, size_t replace_len );
 
 
 

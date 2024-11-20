@@ -63,7 +63,7 @@ static void str_insert() {
     lcl_str_t s;
     TEST_LCL_OK(lcl_str_from( &s, "Hello World!" ));
 
-    TEST_LCL_OK(lcl_str_insert( &s, 0, '>' ));
+    TEST_LCL_OK(lcl_str_insert( &s, 0, ">" ));
     TEST_ASSERT_EQUAL_STRING_MESSAGE( ">Hello World!", s, "str_insert() invalid" );
 
     TEST_LCL_OK(lcl_str_inserts( &s, 8, "There, " ));
@@ -71,19 +71,50 @@ static void str_insert() {
 
     TEST_LCL_OK(lcl_str_free(&s));
 }
-
 static void str_splice() {
 
     
+    lcl_str_t s;
+    TEST_LCL_OK(lcl_str_from( &s, "Hello World!" ));
+
+    char world[6] = {0};
+    TEST_LCL_OK(lcl_str_splice( &s, 6, world, 5 ));
+    TEST_ASSERT_EQUAL_STRING_MESSAGE( "Hello !", s, "str_splice() invalid" );
+    TEST_ASSERT_EQUAL_STRING_MESSAGE( "World", world, "str_splice() invalid" );
+
+    TEST_LCL_OK( lcl_str_splice(&s, 5, NULL, 2) );
+    TEST_ASSERT_EQUAL_STRING_MESSAGE( "Hello", s, "str_splice() invalid" );
+    
+    TEST_LCL_OK(lcl_str_free(&s));
 
 }
+static void str_replace() {
+
+    lcl_str_t s;
+    TEST_LCL_OK(lcl_str_from( &s, "Hello World!" ));
+
+    TEST_LCL_OK(lcl_str_replace( &s, 0, LCL_STR_REPLACEALL, "l", "< an l char >" ));
+    TEST_ASSERT_EQUAL_STRING_MESSAGE( "He< an l char >< an l char >o Wor< an l char >d!", s, "lcl_str_replace() invalid" );
+
+    TEST_LCL_OK(lcl_str_replace( &s, 0, LCL_STR_REPLACEALL, "< an l char >", "l" ));
+    TEST_ASSERT_EQUAL_STRING_MESSAGE( "Hello World!", s, "lcl_str_replace() invalid" );
+
+    TEST_LCL_OK(lcl_str_replace( &s, 0, LCL_STR_REPLACEALL, "l", "" ));
+    TEST_ASSERT_EQUAL_STRING_MESSAGE( "Heo Word!", s, "lcl_str_replace() invalid" );
+
+
+    TEST_LCL_OK(lcl_str_free(&s));
+
+}
+
+
 
 void unit_str_main() {
 
     RUN_TEST( str_init );
     RUN_TEST( str_concatenate );
     RUN_TEST( str_trunc );
-    
-
+    RUN_TEST( str_splice );
+    RUN_TEST( str_replace );
 
 }

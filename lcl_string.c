@@ -48,15 +48,67 @@ lcl_err_t lcl_str_splice(lcl_str_t *sptr, size_t index, char *data, size_t count
 
 lcl_err_t lcl_str_replacesnsn(lcl_str_t *sptr, size_t start, size_t count, const char *find, size_t findlen, const char *replace, size_t replace_len)
 {
-    assert( findlen && replace_len );
-    char* siter  = *sptr;
+    assert( findlen );
     char starter = *find;
+
+    // Determine most efficient way to overwrite 
+    // to avoid uneccessary splicing and inserting
+
+    size_t overwrite_count = 0;
+    size_t insert_len = 0;
+    size_t remove_len = 0;
+    const char* insert_source = NULL;
+
+    // for equal lengths, just overwrite
+    if (findlen == replace_len) {
+        overwrite_count = findlen;
+    } else if (findlen < replace_len) {
+
+        // for larger replacers, overwrite what you can
+        // and insert the rest after
+        overwrite_count = findlen;
+        insert_len = replace_len - findlen;
+        insert_source = &replace[overwrite_count];
+    } else {
+
+        // for smaller replacers, overwrite the whole
+        // replacer, and splice the rest
+        overwrite_count = replace_len;
+        remove_len = findlen - replace_len;
+    }
+
+
+
+    size_t i = start;
     do {
-        if (*siter == starter) {
-            // TODO
+        if ((*sptr)[i] == starter) {
+            size_t remaining = lcl_str_len(*sptr) - i - 1;
+
+
+            if (remaining < findlen) return LCL_OK;
+
+            // if found
+            if (strncmp( &(*sptr)[i], find, findlen ) == 0) {
+                
+                // Overwrite
+                memcpy( &(*sptr)[i], replace, overwrite_count );
+
+                // insert or splice as necessary
+                if (insert_len) {
+                    lcl_str_insertns( sptr, i + overwrite_count, insert_source, insert_len );
+                } else if (remove_len) {
+                    lcl_str_splice( sptr, i + overwrite_count, NULL, remove_len );
+                }
+
+                // move to the end of the modification
+                i += replace_len - 1;
+            }
+
+
+
         }
-        siter ++;
-    } while (--count);
+        i++;
+    } while (--count && i < lcl_str_len(*sptr));
 
 
     return LCL_OK;
