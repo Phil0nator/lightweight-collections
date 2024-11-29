@@ -6,6 +6,7 @@
 
 #include "private/lcl_util.h"
 
+
 #define lcl_list_node_content( node ) (&(node)[1])
 
 
@@ -45,6 +46,12 @@ lcl_err_t lcl_list_init( lcl_list_t** list, size_t itemsize) {
     l->isize = itemsize;
     l->head = NULL;
     *list = l;
+    return LCL_OK;
+}
+
+lcl_err_t lcl_list_from( lcl_list_t** list, const void* elements, size_t count, size_t itemsize ) {
+    LCL_ERRPASS(lcl_list_init(list, itemsize));
+    LCL_ERRPASS(lcl_list_extend(*list, elements, count));
     return LCL_OK;
 }
 
@@ -118,6 +125,7 @@ lcl_err_t lcl_list_extend(lcl_list_t *list, const void *data, size_t items)
             if (!last) return LCL_NO_MEMORY;
             list->head = last;
             bytereader += list->isize;
+            list->len ++;
             items --;
         }
 
@@ -128,6 +136,7 @@ lcl_err_t lcl_list_extend(lcl_list_t *list, const void *data, size_t items)
             last = last->next;
             list->head->prev = last;
             bytereader += list->isize;
+            list->len++;
         }
 
     } else return LCL_BAD_ARGUMENT;
@@ -138,7 +147,7 @@ lcl_err_t lcl_list_truncate(lcl_list_t *list, void *dest, size_t count)
 {
     if (list) {
         lcl_list_node_t* last = lcl_list_last_node(list);
-        char* bytewriter = (char*) dest;
+        char* bytewriter = (char*) dest + ((count-1) * list->isize);
         bool do_write = dest != NULL;
 
         for (size_t i = 0; i < count; i ++) {
@@ -153,8 +162,11 @@ lcl_err_t lcl_list_truncate(lcl_list_t *list, void *dest, size_t count)
                 free(last->next);
                 last->next = NULL;
             }
-            bytewriter += list->isize;
+            bytewriter -= list->isize;
+            list->len --;
         }
+        if (list->head != last) list->head->prev = last;
+        
 
 
     } else return LCL_BAD_ARGUMENT;
@@ -174,6 +186,7 @@ lcl_err_t lcl_list_inserts(lcl_list_t *list, lcl_list_it_t *at, const void *data
             newn->prev->next = newn;
             bytereader += list->isize;
             prev = newn;
+            list->len ++;
         }
 
         prev->next = ender;
@@ -185,6 +198,89 @@ lcl_err_t lcl_list_inserts(lcl_list_t *list, lcl_list_it_t *at, const void *data
     } else return LCL_BAD_ARGUMENT;
     return LCL_OK;
 }
+lcl_err_t lcl_list_take(lcl_list_t *list, lcl_list_it_t *at, lcl_list_t **other) {
+    if (!list || !at || !other || !*other) {
+        return LCL_BAD_ARGUMENT;  // Check for valid arguments
+    }
+
+    lcl_list_t* source = *other;
+    *other = NULL;  // Nullify `*other` to indicate the source list is being consumed
+
+    if (!source->head) {
+        free(source);  // If the source list is empty, just free it
+        return LCL_OK;
+    }
+
+    lcl_list_node_t* source_head = source->head;
+    lcl_list_node_t* source_tail = source->head->prev;
+
+    if (at == list->head) {
+        // If `at` is the head, insert the source list at the beginning
+        lcl_list_node_t* target_head = list->head;
+
+        source_tail->next = target_head;
+        if (target_head) {
+            target_head->prev = source_tail;
+        }
+
+        list->head = source_head;  // Update head pointer to the new first node
+        source_head->prev = NULL;
+    } else {
+        // Insert source list before `at`
+        lcl_list_node_t* prev_node = at->prev;
+
+        prev_node->next = source_head;
+        source_head->prev = prev_node;
+
+        source_tail->next = at;
+        at->prev = source_tail;
+    }
+
+    free(source);  // Free the source list structure
+    return LCL_OK;
+}
+
+lcl_err_t lcl_list_take_extend(lcl_list_t *dest, lcl_list_t **src) {
+    if (!dest || !src || !*src) {
+        return LCL_BAD_ARGUMENT;  // Check for valid arguments
+    }
+
+    lcl_list_t *source = *src;   // Take ownership of the source list
+    *src = NULL;                 // Nullify the source pointer to indicate it's consumed
+
+    if (!source->head) {
+        free(source);            // If the source list is empty, free its structure
+        return LCL_OK;
+    }
+
+    dest->len += source->len;
+
+    if (!dest->head) {
+        // If the destination list is empty, make the source list the new destination
+        dest->head = source->head;
+        dest->head->prev = (source->head->prev) ? source->head->prev : source->head; // Handle single node
+        free(source);            // Free the source structure
+        return LCL_OK;
+    }
+
+    // Both lists are non-empty; append the source list to the destination
+    lcl_list_node_t *dest_tail = dest->head->prev ? dest->head->prev : dest->head; // Handle single node
+    lcl_list_node_t *source_head = source->head;
+    lcl_list_node_t *source_tail = source->head->prev ? source->head->prev : source->head; // Handle single node
+    // Connect the destination's tail to the source's head
+    dest_tail->next = source_head;
+    source_head->prev = dest_tail;
+    
+    // Update the destination's tail to the source's tail
+    dest->head->prev = source_tail;
+    source_tail->next = NULL; // Explicitly terminate the combined list
+
+    dest->head->prev->next = NULL;
+
+    free(source);                // Free the source structure
+    return LCL_OK;
+}
+
 
 lcl_err_t lcl_list_splice(lcl_list_t *list, lcl_list_it_t *at, void *data, size_t count)
 {
@@ -210,6 +306,7 @@ lcl_err_t lcl_list_splice(lcl_list_t *list, lcl_list_it_t *at, void *data, size_
                 node->prev = NULL;
             }
             bytewriter += list->isize;
+            list->len --;
         }
 
         if (!node) {
@@ -227,6 +324,42 @@ lcl_err_t lcl_list_splice(lcl_list_t *list, lcl_list_it_t *at, void *data, size_
     return LCL_OK;
 }
 
+lcl_err_t lcl_list_splice_links(lcl_list_t *list, lcl_list_it_t *at, lcl_list_t **dest, size_t count)
+{
+    if (list && at && dest && count) {
+        lcl_list_node_t* first = at;
+        lcl_list_node_t* last = at;
+        LCL_ERRPASS(lcl_list_init( dest, list->isize ));
+        LCL_ERRPASS(lcl_list_it_advance_by(&last, count-1));
+
+        
+        if (first->prev) 
+            first->prev->next = last->next;
+        if (last->next)
+            last->next->prev = first->prev;
+        
+        if (first == list->head) {
+            list->head = last->next;
+            list->head->prev = first->prev;
+        }
+
+        if (last == list->head->prev) {
+            list->head->prev = first->prev;
+            first->prev->next = NULL;
+        }
+
+        
+
+        (*dest)->head = first;
+        (*dest)->head->prev = last;
+        last->next = NULL;
+        (*dest)->len = count;
+        list->len -= count;
+
+    } else return LCL_BAD_ARGUMENT;
+    return LCL_OK;
+}
+
 lcl_err_t lcl_list_swap(lcl_list_t *list, lcl_list_it_t *a, lcl_list_it_t *b)
 {
     if (!(a && b && list)) return LCL_BAD_ARGUMENT;
@@ -236,6 +369,7 @@ lcl_err_t lcl_list_swap(lcl_list_t *list, lcl_list_it_t *a, lcl_list_it_t *b)
     lcl_list_node_t* an = a->next;
     lcl_list_node_t* bp = b->prev;
     lcl_list_node_t* bn = b->next;
+    lcl_list_node_t* tail = list->head ? list->head->prev : NULL;
 
     // Swap pointers, handle adjacency case
     if (an == b) {  // a is immediately before b
@@ -269,14 +403,32 @@ lcl_err_t lcl_list_swap(lcl_list_t *list, lcl_list_it_t *a, lcl_list_it_t *b)
 
 
     // Update head if necessary
-    if (list->head == a) list->head = b;
-    else if (list->head == b) list->head = a;
+    if (list->head == a) {
+        list->head = b;
+        list->head->prev = tail;
+    }
+    else if (list->head == b) {
+        list->head = a;
+        list->head->prev = tail;
+    }
 
     // Update tail if necessary
     if (list->head->prev == a) list->head->prev = b;
     else if (list->head->prev == b) list->head->prev = a;
     
+    
+    return LCL_OK;
+}
 
+lcl_err_t lcl_list_free(lcl_list_t **list)
+{
+    lcl_list_it_t* next = NULL;
+    for (lcl_list_it_t *it = (*list)->head; it; it = next) {
+        next = it->next;
+        free(it);
+    }
+    free(*list);
+    *list = NULL;
     return LCL_OK;
 }
 

@@ -1,3 +1,44 @@
+/**
+ * @file lcl_vect.h
+ * @author Philo Kaulkin
+ * @brief LCL Vectors
+ * 
+ * LCL Vectors (vects) provide a dynamic static typed array. They
+ * are designed to be compatible with typical C-style arrays, and
+ * can be indexed using the typical [...] operators. Additionally,
+ * they can be treated like normal arrays for passing into functions
+ * for read/write operations.
+ * 
+ * Vects use a prefixed-header to store information about length,
+ * capacity and itemsize.
+ * 
+ * For example, the following code will product the following results in memory:
+ * 
+ * ```
+ *      int* vec;
+ *      int values[] = {1,2,3,4,5,6,7,8,9,10};
+ *      TEST_LCL_OK(lcl_vect_from( &vec, &values, 10 ));
+ * ```
+ * Memory
+ * 
+ *                  
+ * | cap | len | isize       |         data          |
+ * | 10  | 10  | sizeof(int) |  1 |  2 |  3 |...| 10 |
+ * ^ Malloc'd pointer        ^ returned pointer (vec)
+ * 
+ * The capacity and length can then move freely from each other,
+ * with length always being <= capacity. Additional free capacity
+ * can be reserved to improve speed by reducing calls to realloc.
+ * This free space can also be freed by using vect_clean().
+ * 
+ * @version 0.1
+ * @date 2024-11-23
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
+
 #ifndef LCL_VECT_H
 #define LCL_VECT_H
 

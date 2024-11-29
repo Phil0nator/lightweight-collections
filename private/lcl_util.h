@@ -2,6 +2,7 @@
 #define LCL_UTIL_H
 
 #include <stdint.h>
+#include <string.h>
 #include <stdio.h>
 
 #define LCL_DISPSIZE_MAX    sizeof(uint64_t)

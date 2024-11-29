@@ -10,8 +10,11 @@ static const char* lcl_strerrors[] = {
     [LCL_COLLECTION_EMPTY] = "Collection Empty"
 };
 
+
+
 const char *lcl_strerror(lcl_err_t err)
 {
+    
     if ((unsigned)err < (sizeof(lcl_strerrors) / sizeof(lcl_strerrors[0]))) {
         return lcl_strerrors[err];
     } else return "Unkown LCL Error";

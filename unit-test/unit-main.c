@@ -16,4 +16,6 @@ void tearDown(void) {
 int main() {
     unit_vect_main();
     unit_str_main();
+    unit_list_main();
+    unit_mpool_main();
 }

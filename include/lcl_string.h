@@ -1,3 +1,14 @@
+/**
+ * @file lcl_string.h
+ * @author Philo Kaulkin
+ * @brief An extension of lcl_vect for use with null-terminated strings
+ * @version 0.1
+ * @date 2024-11-23
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
 #ifndef LCL_STRING_H
 #define LCL_STRING_H
 

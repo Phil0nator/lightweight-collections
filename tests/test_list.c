@@ -17,15 +17,26 @@ int main() {
     lcl_list_inserts( list, lcl_list_index(list, 2), my_stuff, 4 );
     lcl_list_display( list, "%d" );
 
-
     lcl_list_truncate( list, NULL, 3 );
+
+    lcl_list_display( list, "%d" );
+    
+
+    lcl_list_t* spliced;
+    lcl_list_splice_links( list, lcl_list_index( list, 3 ), &spliced, 2 );
+    printf("after splice: ");
     lcl_list_display( list, "%d" );
 
+    printf("spliced: ");
+    lcl_list_display( spliced, "%d" );
 
-    lcl_list_splice( list, lcl_list_index( list, 1 ), NULL, 2 );
+    lcl_list_take_extend( list, &spliced );
+
     lcl_list_display( list, "%d" );
 
     lcl_list_swap( list, lcl_list_index( list, 1 ), lcl_list_index(list, 0) );
+    printf("last of list: %d\n", *(int*) (lcl_list_last(list)));
+    printf("first of list: %d\n", *(int*) lcl_list_it_get(lcl_list_begin(list)));
     lcl_list_display( list, "%d" );
 
 

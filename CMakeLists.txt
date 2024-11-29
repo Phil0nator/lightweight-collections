@@ -5,11 +5,17 @@ set(LIBRARY_SOURCES
     "lcl_err.c" 
     "lcl_list.c" 
     "lcl_string.c"    
+    "lcl_bitvect.c"
+    "lcl_hash.c"
+    "lcl_mpool.c"
+    
 )
 set(TEST_SRCS 
     "unit-test/unit-vect.c"
     "unit-test/unit-main.c"
     "unit-test/unit-str.c"
+    "unit-test/unit-list.c"
+    "unit-test/unit-mpool.c"
 )
 
 # Check if building for ESP32
