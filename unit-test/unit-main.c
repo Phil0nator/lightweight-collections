@@ -18,4 +18,5 @@ int main() {
     unit_str_main();
     unit_list_main();
     unit_mpool_main();
+    unit_hmap_main();
 }

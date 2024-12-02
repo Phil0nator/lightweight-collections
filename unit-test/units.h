@@ -8,5 +8,5 @@ void unit_vect_main();
 void unit_str_main();
 void unit_list_main();
 void unit_mpool_main();
-
+void unit_hmap_main();
 #endif

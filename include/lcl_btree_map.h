@@ -10,6 +10,4 @@ typedef struct lcl_btree_map lcl_btree_map_t;
 
 
 
-
-
 #endif

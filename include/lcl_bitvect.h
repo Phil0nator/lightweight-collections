@@ -15,6 +15,7 @@ lcl_err_t lcl_bitvect_find_last( const lcl_bitvect_t bvec, bool bit, size_t* bit
 
 lcl_err_t lcl_bitvect_assign( const lcl_bitvect_t bvec, size_t index, bool bit );
 lcl_err_t lcl_bitvect_toggle( const lcl_bitvect_t bvec, size_t index );
+lcl_err_t lcl_bitvect_getbit( const lcl_bitvect_t bvec, size_t index, bool* bit );
 
 
 

@@ -111,6 +111,16 @@ size_t lcl_vect_isize( const lcl_vect_t vect );
 size_t lcl_vect_unused( const lcl_vect_t vect );
 
 /**
+ * @brief Get the number of bytes of the length of the vect
+ * 
+ * vect.len * vect.isize
+ * 
+ * @param vect 
+ * @return size_t vect bytes
+ */
+size_t lcl_vect_bytes( const lcl_vect_t vect );
+
+/**
  * @brief Get a pointer to the last item of a vect
  * 
  * @warning there is no NULL check on this argument

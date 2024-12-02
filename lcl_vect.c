@@ -100,6 +100,12 @@ size_t lcl_vect_unused(const lcl_vect_t vect)
     return h->cap - h->len;
 }
 
+size_t lcl_vect_bytes(const lcl_vect_t vect)
+{
+    lcl_vect_header_t* h =  lcl_vect_get_header(vect);
+    return h->len * h->isize;
+}
+
 void *__lcl_vect_last(lcl_vect_t vect)
 {   
     lcl_vect_header_t* header = lcl_vect_get_header(vect);

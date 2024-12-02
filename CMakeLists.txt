@@ -8,7 +8,8 @@ set(LIBRARY_SOURCES
     "lcl_bitvect.c"
     "lcl_hash.c"
     "lcl_mpool.c"
-    
+    "lcl_rc.c"
+    "lcl_hmap.c"
 )
 set(TEST_SRCS 
     "unit-test/unit-vect.c"
@@ -16,6 +17,8 @@ set(TEST_SRCS
     "unit-test/unit-str.c"
     "unit-test/unit-list.c"
     "unit-test/unit-mpool.c"
+
+    "unit-test/unit-hmap.c"
 )
 
 # Check if building for ESP32
