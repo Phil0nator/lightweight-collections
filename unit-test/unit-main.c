@@ -19,4 +19,5 @@ int main() {
     unit_list_main();
     unit_mpool_main();
     unit_hmap_main();
+    unit_cqueue_main();
 }

@@ -39,6 +39,8 @@ static inline lcl_err_t lcl_str_init(lcl_str_t* sptr, size_t capacity)
  */
 lcl_err_t lcl_str_from( lcl_str_t* sptr, const char* other );
 
+lcl_err_t lcl_str_join( lcl_str_t* sptr, const char* delim, char** substrs, size_t count );
+
 /**
  * @brief Clone a string to a new string
  * 
@@ -234,5 +236,19 @@ static inline lcl_err_t lcl_str_free( lcl_str_t* sptr )
 
 
 #define lcl_str_debug lcl_vect_debug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif

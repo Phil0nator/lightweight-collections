@@ -108,6 +108,27 @@ static void str_replace() {
 }
 
 
+static void str_join() {
+
+    lcl_str_t s = NULL;
+
+    char* my_arr[] = {
+        "This",
+        "Is",
+        "a",
+        "Few Strings",
+        "Put",
+        "Together"
+    };
+
+    TEST_LCL_OK(lcl_str_join(&s, ", ", my_arr, 6));
+
+
+    TEST_LCL_OK(lcl_str_free(&s));
+
+}
+
+
 
 void unit_str_main() {
 
@@ -116,5 +137,6 @@ void unit_str_main() {
     RUN_TEST( str_trunc );
     RUN_TEST( str_splice );
     RUN_TEST( str_replace );
+    RUN_TEST( str_join );
 
 }

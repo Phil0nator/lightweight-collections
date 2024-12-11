@@ -9,4 +9,6 @@ void unit_str_main();
 void unit_list_main();
 void unit_mpool_main();
 void unit_hmap_main();
+void unit_cqueue_main();
+
 #endif

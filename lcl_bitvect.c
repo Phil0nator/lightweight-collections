@@ -59,3 +59,12 @@ lcl_err_t lcl_bitvect_toggle(const lcl_bitvect_t bvec, size_t index)
     bvec[byte] ^= (1 << bitn); 
     return LCL_OK;
 }
+
+lcl_err_t lcl_bitvect_getbit(const lcl_bitvect_t bvec, size_t index, bool *bit)
+{
+    if (!bvec) return LCL_BAD_ARGUMENT;
+    size_t byte = index / 8;
+    size_t bitn = index % 8;
+    *bit = (bvec[byte] & (1 << bitn)) ? true : false; 
+    return LCL_OK;
+}

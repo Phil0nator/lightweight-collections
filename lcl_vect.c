@@ -243,6 +243,14 @@ lcl_err_t lcl_vect_display(const lcl_vect_t vect, const char *fmt)
     return LCL_OK;
 }
 
+lcl_err_t lcl_vect_sort(lcl_vect_t vect, lcl_refcomparator_t cmp)
+{
+    if (!vect || !cmp) return LCL_BAD_ARGUMENT;
+    lcl_vect_header_t* header = lcl_vect_get_header( vect );
+    qsort( vect, header->len, header->isize, cmp );
+    return LCL_OK;
+}
+
 lcl_err_t __lcl_vect_clean(lcl_vect_t *vect)
 {
     if (lcl_vectptr_valid(vect)) {

@@ -11,13 +11,26 @@ lcl_err_t lcl_str_from( lcl_str_t* sptr, const char* other ) {
     return lcl_str_froms(sptr, other, len + 1);
 }
 
+lcl_err_t lcl_str_join(lcl_str_t *sptr, const char *delim, char **substrs, size_t count)
+{
+    if (!sptr || !delim || !substrs) return LCL_BAD_ARGUMENT;
+
+    if (!*sptr) LCL_ERRPASS(lcl_str_init(sptr, count * 2));
+
+    for (size_t i = 0; i < count; i ++) {
+        if (i) LCL_ERRPASS(lcl_str_extend(sptr, delim));
+        LCL_ERRPASS(lcl_str_extend(sptr, substrs[i]));
+    }
+
+    return LCL_OK;
+
+}
+
 lcl_err_t lcl_str_extend(lcl_str_t *sptr, const char *other)
 {
     size_t len = lcl_str_len(*sptr);
-    size_t otherlen = strlen(other);
-    LCL_ERRPASS(lcl_vect_set_len( sptr, len + otherlen ));
-    char* copyptr = &((*sptr)[len -1 ]);
-    strcpy( copyptr, other );
+    if (len) LCL_ERRPASS(lcl_vect_pop( sptr, NULL ));
+    LCL_ERRPASS(lcl_vect_extend( sptr, other, strlen(other)+1 ));
     return LCL_OK;
 }
 
@@ -113,3 +126,32 @@ lcl_err_t lcl_str_replacesnsn(lcl_str_t *sptr, size_t start, size_t count, const
 
     return LCL_OK;
 }
+
+
+
+
+
+lcl_err_t lcl_str_split(const lcl_str_t sptr, char* delim, lcl_str_t* svect[])
+{
+    if (!sptr || !svect || !delim) return LCL_BAD_ARGUMENT;
+
+    size_t delimlen = strlen(delim);
+    LCL_ERRPASS(lcl_vect_init(svect, 8));
+
+    const char* iter = sptr;
+    const char* next;
+    while ((next = strstr(iter, delim)) != NULL) {
+        lcl_str_t newstr;
+        LCL_ERRPASS(lcl_str_froms( &newstr, iter, next-iter ));
+        iter = next + delimlen;
+        LCL_ERRPASS(lcl_vect_push(svect, newstr));
+    }
+
+    lcl_str_t newstr;
+    LCL_ERRPASS(lcl_str_from( &newstr, iter ));
+    LCL_ERRPASS(lcl_vect_push(svect, newstr));
+
+    return LCL_OK;
+
+}
+

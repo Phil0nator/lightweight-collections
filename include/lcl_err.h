@@ -15,6 +15,12 @@ typedef enum lcl_err {
     LCL_NOT_FOUND,
 } lcl_err_t;
 
+/**
+ * @brief Convert an error code to a static string
+ * 
+ * @param err error code
+ * @return const char* static descriptor string
+ */
 const char* lcl_strerror(lcl_err_t err);
 
 

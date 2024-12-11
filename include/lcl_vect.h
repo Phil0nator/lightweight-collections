@@ -44,6 +44,7 @@
 
 #include <stddef.h>
 #include "lcl_err.h"
+#include "lcl_alg.h"
 
 
 typedef void* lcl_vect_t;
@@ -239,6 +240,14 @@ lcl_err_t __lcl_vect_splice(lcl_vect_t* vect, size_t index, void* data, size_t c
  */
 lcl_err_t lcl_vect_swap( lcl_vect_t vect, size_t a, size_t b );
 
+/**
+ * @brief Sort a vect using a comparator
+ * 
+ * @param vect vect to sort
+ * @param cmp comparator (see lcl_alg.h) e.g: lcl_cmpu32
+ * @return lcl_err_t 
+ */
+lcl_err_t lcl_vect_sort( lcl_vect_t vect, lcl_refcomparator_t cmp );
 
 /**
  * @brief Cleanup extra unused capcity of a vect
