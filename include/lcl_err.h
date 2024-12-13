@@ -2,6 +2,7 @@
 #ifndef LCL_ERR_H
 #define LCL_ERR_H
 
+
 /**
  * @brief Errors returned by LCL functions
  */

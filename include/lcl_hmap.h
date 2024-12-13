@@ -182,6 +182,16 @@ lcl_any_t lcl_hmap_iter_value( lcl_hmap_iter_t i );
  */
 lcl_err_t lcl_hmap_display( lcl_hmap_t* hmap, const char* keyfmt, const char* valuefmt );
 
+
+/**
+ * @brief Clone a hashmap
+ * 
+ * @param src hmap to clone
+ * @return lcl_hmap_t* cloned hashmap (NULL if not enough memory)
+ */
+lcl_hmap_t* lcl_hmap_clone(lcl_hmap_t* src);
+
+
 /**
  * @brief Free a hash map
  * 

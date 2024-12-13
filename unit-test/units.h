@@ -1,7 +1,9 @@
 #ifndef LCL_UNITS_H
 #define LCL_UNITS_H
+#include "unity.h"
+#include "lcl_err.h"
 
-#define TEST_LCL_OK( err ) TEST_ASSERT_MESSAGE( (err) == LCL_OK, "Expected LCL_OK" )
+#define TEST_LCL_OK( err )  do { lcl_err_t __err = err; if (__err != LCL_OK) { printf("LCL ERROR(%d): %s\n", __err, lcl_strerror(__err)); TEST_FAIL(); }} while (0)
 
 
 void unit_vect_main();

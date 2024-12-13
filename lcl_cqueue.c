@@ -1,5 +1,7 @@
 #include "lcl_cqueue.h"
 
+#include "private/lcl_util.h"
+
 #include <stdlib.h>
 #include <memory.h>
 
@@ -110,4 +112,15 @@ void lcl_cqueue_free(lcl_cqueue_t **cqueue)
 {
     free(*cqueue);
     *cqueue = NULL;
+}
+
+lcl_err_t lcl_cqueue_display(lcl_cqueue_t *cqueue, const char *fmt)
+{   
+    printf("[ ");
+    for (size_t i = cqueue->outgoing; i != cqueue->incoming; i++) {
+        if (i != cqueue->outgoing) printf(", ");
+        printf_unkown( &((char*)cqueue->dptr)[i * cqueue->isize], cqueue->isize, fmt );
+    }
+    printf(" ]\n");
+    return LCL_OK;
 }

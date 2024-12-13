@@ -115,6 +115,29 @@ lcl_list_it_t *lcl_list_index(lcl_list_t *list, size_t idx)
     return i;
 }
 
+lcl_list_it_t *lcl_list_middle(lcl_list_t *list)
+{
+    if (!list) return NULL;
+    if (!list->head) return NULL;
+    if (list->head->prev == NULL) return list->head;
+    
+    return lcl_list_it_middle(list->head);
+
+}
+
+lcl_list_it_t *lcl_list_it_middle(lcl_list_it_t *it)
+{
+    lcl_list_it_t* slow = it;
+    lcl_list_it_t* fast = it;
+
+    while (fast->next && fast->next->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    return slow;
+}
+
 lcl_err_t lcl_list_extend(lcl_list_t *list, const void *data, size_t items)
 {
     if (list) {
@@ -157,16 +180,25 @@ lcl_err_t lcl_list_truncate(lcl_list_t *list, void *dest, size_t count)
                 memcpy(bytewriter, lcl_list_node_content(last), list->isize);
             }
             
-            last = last->prev;
-            if (last) {
-                free(last->next);
-                last->next = NULL;
+            if (last != list->head) {
+                last = last->prev;
+                if (last) {
+                    free(last->next);
+                    last->next = NULL;
+                }
+            } else {
+                free(last);
+                last = NULL;
+                list->head = NULL;
             }
             bytewriter -= list->isize;
             list->len --;
         }
         if (list->head != last) list->head->prev = last;
-        
+        else if (list->head) {
+            list->head->next = NULL;
+            list->head->prev = NULL;
+        }
 
 
     } else return LCL_BAD_ARGUMENT;
@@ -416,8 +448,75 @@ lcl_err_t lcl_list_swap(lcl_list_t *list, lcl_list_it_t *a, lcl_list_it_t *b)
     if (list->head->prev == a) list->head->prev = b;
     else if (list->head->prev == b) list->head->prev = a;
     
-    
     return LCL_OK;
+}
+
+lcl_list_t *lcl_list_clone(lcl_list_t *list)
+{
+    lcl_list_t* output;
+    if (lcl_list_init( &output, list->isize ) != LCL_OK) return NULL;
+    
+    for lcl_list_each(i, list) {
+        if (lcl_list_push( output, lcl_list_it_get(i) ) != LCL_OK) return NULL;
+    }
+
+    return output;
+}
+
+static lcl_list_it_t* sorted_merge(lcl_list_it_t* left, lcl_list_it_t* right, lcl_refcomparator_t cmp) {
+    
+    if (!left) return right;
+    if (!right) return left;
+
+    lcl_list_node_t* result;
+    if (cmp( lcl_list_node_content(left), lcl_list_node_content(right) ) > 0) 
+    {
+        result = left;
+        result->next = sorted_merge(left->next, right, cmp);
+        result->next->prev = result;
+        result->prev = NULL;
+    }
+    else 
+    {
+        result = right;
+        result->next = sorted_merge(left, right->next, cmp);
+        result->next->prev = result; 
+        result->prev = NULL;
+    }
+
+    return result;
+}
+
+static lcl_list_it_t* merge_sort(lcl_list_it_t* list, lcl_refcomparator_t cmp) {
+
+    if (!list || !list->next) return list;
+
+    lcl_list_it_t* middle = lcl_list_it_middle(list);
+    lcl_list_it_t* midnext = middle->next;
+    
+    middle->next = NULL;
+    if (midnext) midnext->prev = NULL;
+
+    lcl_list_it_t* left = merge_sort(list, cmp);
+    lcl_list_it_t* right = merge_sort(midnext, cmp);
+
+    return sorted_merge(left, right, cmp);
+
+}
+
+lcl_err_t lcl_list_sort(lcl_list_t *list, lcl_refcomparator_t cmp)
+{
+    if (!list || !cmp) return LCL_BAD_ARGUMENT;
+    if (list->head == NULL) return LCL_OK;          // empty
+    if (list->head->prev == NULL) return LCL_OK;    // 1 item
+
+    list->head = merge_sort(list->head, cmp);
+    lcl_list_it_t* it = list->head;
+    while (it->next) it = it->next;
+    list->head->prev = it;
+
+    return LCL_OK;
+
 }
 
 lcl_err_t lcl_list_free(lcl_list_t **list)
@@ -443,3 +542,6 @@ lcl_err_t lcl_list_display(lcl_list_t *list, const char *fmt)
     printf("]\n");
     return LCL_OK;
 }
+
+
+

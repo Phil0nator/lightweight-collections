@@ -76,6 +76,7 @@ lcl_err_t __lcl_vect_from( lcl_vect_t* vect, const void* data, size_t itemsize, 
  */
 lcl_vect_t lcl_vect_clone(const lcl_vect_t vect);
 
+
 /**
  * @brief Get the len of vect
  * 

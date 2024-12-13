@@ -275,6 +275,22 @@ lcl_err_t lcl_hmap_display(lcl_hmap_t *hmap, const char *keyfmt, const char *val
     return LCL_OK;
 }
 
+lcl_hmap_t* lcl_hmap_clone(lcl_hmap_t *src)
+{
+
+    lcl_hmap_t *dst = (lcl_hmap_t*) malloc (sizeof(lcl_hmap_t));
+    if (!dst) return NULL;
+    dst->hfn = src->hfn;
+    dst->size = src->size;
+    dst->keyeq = src->keyeq;
+    dst->nodes = lcl_vect_clone(src->nodes);
+    if (!dst->nodes) {
+        free(dst);
+        return NULL;
+    }
+    return dst;
+}
+
 lcl_err_t lcl_hmap_free(lcl_hmap_t **hmap, lcl_deallocfn_t kdealloc, lcl_deallocfn_t vdealloc)
 {
     if (!hmap || !(*hmap)) return LCL_BAD_ARGUMENT;

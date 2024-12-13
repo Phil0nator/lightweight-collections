@@ -3,6 +3,8 @@
 
 #include "units.h"
 
+#include <memory.h>
+
 static void list_init_loop() {
 
     lcl_list_t* list;
@@ -115,6 +117,37 @@ static void list_splice() {
 
 }
 
+void list_clone() {
+
+    lcl_list_t* list;
+    int arr[] = {1,2,3,4,5,6,7,8,9,10};
+
+    TEST_LCL_OK(lcl_list_from(&list, arr, 10, sizeof(int)));
+    lcl_list_t* cloned_list = lcl_list_clone(list);
+    TEST_ASSERT_MESSAGE(cloned_list, "list_clone() returned NULL");
+    int cloned[10];
+    TEST_LCL_OK(lcl_list_truncate(cloned_list, cloned, 10));
+
+    TEST_ASSERT_MESSAGE( memcmp(arr,cloned, sizeof(cloned)) == 0, "list_clone() invalid" );
+
+    TEST_LCL_OK(lcl_list_free(&cloned_list));
+    TEST_LCL_OK(lcl_list_free(&list));
+
+
+}
+
+void list_sort() {
+    lcl_list_t* list;
+    int sorted_arr[] = {1,2,3,4,5,6,7,8,9,10};
+    int arr[] = {8,2,4,9,1,3,6,5,7,10};
+    TEST_LCL_OK(lcl_list_from(&list, arr, 10, sizeof(int)));
+    TEST_LCL_OK(lcl_list_sort(list, lcl_cmpi32));
+    int test[10];
+    TEST_LCL_OK(lcl_list_truncate( list, test, 10 ));
+    TEST_ASSERT_MESSAGE( memcmp(test,sorted_arr, sizeof(test)) == 0, "list_sort() invalid" );
+    TEST_LCL_OK(lcl_list_free(&list));
+}
+
 
 
 void unit_list_main() {
@@ -122,4 +155,6 @@ void unit_list_main() {
     RUN_TEST(list_trunc);
     RUN_TEST(list_insert);
     RUN_TEST(list_splice);
+    RUN_TEST(list_clone);
+    RUN_TEST(list_sort);
 }

@@ -69,6 +69,9 @@ lcl_err_t __lcl_vect_from(lcl_vect_t *vect, const void *data, size_t itemsize, s
     return LCL_OK;
 }
 
+
+
+
 lcl_vect_t lcl_vect_clone(const lcl_vect_t vect)
 {
     lcl_vect_header_t *h = lcl_vect_get_header(vect);

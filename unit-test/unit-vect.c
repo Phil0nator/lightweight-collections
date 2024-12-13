@@ -1,4 +1,7 @@
+#include <memory.h>
+
 #include "lcl_vect.h"
+#include "lcl_alg.h"
 #include "unity.h"
 
 
@@ -175,6 +178,18 @@ static void vect_clone() {
 
 }
 
+void vect_sort() {
+    int* vec;
+    int values_sorted[] = {1,2,3,4,5,6,7,8,9,10};
+    int values[] = {8,2,9,4,10,1,6,3,5,7};
+
+    TEST_LCL_OK(lcl_vect_from( &vec, &values, 10 ));
+    TEST_LCL_OK(lcl_vect_sort(vec, lcl_cmpi32));
+    TEST_ASSERT_MESSAGE( memcmp( vec, values_sorted, sizeof(values_sorted) ), "vect_sort failed" );
+    TEST_LCL_OK(lcl_vect_free(&vec));
+
+}
+
 
 void unit_vect_main() {
 
@@ -184,5 +199,6 @@ void unit_vect_main() {
     RUN_TEST( vect_insert );
     RUN_TEST( vect_splice );
     RUN_TEST( vect_clone );
+    RUN_TEST( vect_sort );
 
 }

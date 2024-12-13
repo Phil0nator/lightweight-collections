@@ -19,6 +19,11 @@ size_t lcl_cqueue_isize(lcl_cqueue_t* cqueue);
 size_t lcl_cqueue_cap(lcl_cqueue_t* cqueue);
 size_t lcl_cqueue_size(lcl_cqueue_t* cqueue);
 
+
+
+
 void lcl_cqueue_free(lcl_cqueue_t** cqueue);
+
+lcl_err_t lcl_cqueue_display( lcl_cqueue_t* cqueue, const char* fmt);
 
 #endif

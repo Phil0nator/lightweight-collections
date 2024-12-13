@@ -31,7 +31,9 @@ bool lcl_streq(const lcl_any_t a, const lcl_any_t b);
 
 #define __lcl_create_cmptp(name, type) \
     static inline int lcl_cmp##name(const void* a, const void* b) \
-        { return (int) (*(type *)b - *(type *)a); }
+        { return (int) (*(type *)b - *(type *)a); }\
+    static inline int lcl_rcmp##name(const void* a, const void* b) \
+        { return (int) (*(type *)a - *(type *)b); }\
 
 __lcl_create_cmptp(u8, uint8_t);
 __lcl_create_cmptp(i8, int8_t);
@@ -44,6 +46,9 @@ __lcl_create_cmptp(ptr, char*);
 static inline int lcl_cmpf32(const void* a, const void* b)
     { float c = (*(float *)b - *(float *)a);
         return c > 0 ? ( 1 ) : ( c == 0 ? 0 : -1 ); }
+        
+static inline int lcl_rcmpf32(const void* a, const void* b)
+    { return lcl_cmpf32(b,a); }
 
 
 

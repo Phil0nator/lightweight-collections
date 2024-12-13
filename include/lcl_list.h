@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "lcl_err.h"
-
+#include "lcl_alg.h"
 
 
 /**
@@ -132,6 +132,23 @@ lcl_err_t lcl_list_it_advance_by( lcl_list_it_t** it, size_t by );
 lcl_list_it_t* lcl_list_index( lcl_list_t* list, size_t idx );
 
 /**
+ * @brief Get an iterator to the middle of the list
+ * 
+ * @param list a list
+ * @return lcl_list_it_t* the middle of the list, or NULL if error 
+ */
+lcl_list_it_t* lcl_list_middle( lcl_list_t* list );
+
+/**
+ * @brief Get an iterator to the middle of the list starting at
+ *  the given iterator
+ * 
+ * @param it iterator to start at
+ * @return lcl_list_it_t* middle of list starting at it
+ */
+lcl_list_it_t* lcl_list_it_middle( lcl_list_it_t* it );
+
+/**
  * @brief Add to the end of a list
  * 
  */
@@ -224,6 +241,21 @@ lcl_err_t lcl_list_splice_links( lcl_list_t* list, lcl_list_it_t* at, lcl_list_t
  */
 lcl_err_t lcl_list_swap( lcl_list_t* list, lcl_list_it_t* a, lcl_list_it_t* b );
 
+/**
+ * @brief Clone a list 
+ * 
+ * @param list list to clone
+ * @return lcl_list_t* the cloned list, or NULL if no memory
+ */
+lcl_list_t* lcl_list_clone( lcl_list_t* list );
+
+/**
+ * @brief Sort a list
+ * 
+ * @param list list to sort
+ * @return lcl_err_t any errors
+ */
+lcl_err_t lcl_list_sort( lcl_list_t* list, lcl_refcomparator_t cmp );
 /**
  * @brief Free a list
  * 
