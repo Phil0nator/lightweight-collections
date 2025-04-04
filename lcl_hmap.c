@@ -74,7 +74,7 @@ static bool lcl_hmap_nodes_insert(
 
     while (nodes[hindex].present) {
         if ( nodes[hindex].hash == hash && keyeq( nodes[hindex].key, key ) ) {
-            *old = nodes[hindex].value;
+            if (old) *old = nodes[hindex].value;
             nodes[hindex].value = data;
             return true;
         } else {
@@ -100,11 +100,12 @@ static lcl_err_t lcl_hmap_expand( lcl_hmap_t* dest, size_t new_size ) {
 
 
     for (size_t i = 0; i < lcl_vect_len(dest->nodes); i++) {
-        lcl_hmap_nodes_insert(dest->keyeq, new_nodes, new_size, dest->nodes[i].key, dest->nodes[i].value, NULL, dest->nodes[i].hash );
+        if (dest->nodes[i].present) 
+            lcl_hmap_nodes_insert(dest->keyeq, new_nodes, new_size, dest->nodes[i].key, dest->nodes[i].value, NULL, dest->nodes[i].hash );
     }
 
     
-    lcl_vect_free( dest->nodes );
+    lcl_vect_free( &dest->nodes );
 
     dest->nodes = new_nodes;
 
